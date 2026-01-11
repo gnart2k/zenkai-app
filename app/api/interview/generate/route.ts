@@ -1,12 +1,8 @@
-import { OpenAIStream, OpenAIStreamPayload } from "@/lib/interview/openai-stream";
+import { OllamaStream, OllamaStreamPayload } from "@/lib/interview/ollama-client";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("Missing env var from OpenAI");
-  }
-
   const { prompt } = (await req.json()) as {
     prompt?: string;
   };
@@ -15,8 +11,8 @@ export async function POST(req: Request) {
     return new Response("No prompt in request", { status: 400 });
   }
 
-  const payload: OpenAIStreamPayload = {
-    model: "gpt-3.5-turbo",
+  const payload: OllamaStreamPayload = {
+    model: "ministral-3:14b-cloud",
     messages: [
       {
         role: "system",
@@ -31,9 +27,8 @@ export async function POST(req: Request) {
     presence_penalty: 0,
     max_tokens: 450,
     stream: true,
-    n: 1,
   };
 
-  const stream = await OpenAIStream(payload);
+  const stream = await OllamaStream(payload);
   return new Response(stream);
 }

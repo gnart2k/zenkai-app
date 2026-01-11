@@ -9,11 +9,11 @@ Successfully migrated the AI interview functionality from `@liftoff/` to `@saas-
 - **Merged 17 new dependencies** from liftoff into saas-starter
 - **Identified duplicates**: `clsx`, `autoprefixer`, `postcss`, `tailwindcss`, `@types/node`, `@types/react`, `@types/react-dom`, `typescript`
 - **Resolved conflicts**: Used newer versions from saas-starter where applicable
-- **Added key interview dependencies**: `@ffmpeg/*`, `openai`, `react-webcam`, `formidable`, `@upstash/*`, `framer-motion`, `eventsource-parser`, `encoding`, `uuidv4`
+- **Added key interview dependencies**: `@ffmpeg/*`, `react-webcam`, `formidable`, `@upstash/*`, `framer-motion`, `eventsource-parser`, `encoding`, `uuidv4`
 
 ### 2. Environment Variables
 - **Combined .env files** into single `saas-starter/.env.example`
-- **Added OpenAI configuration**: `OPENAI_API_KEY`
+- **Added Ollama configuration**: `OLLAMA_BASE_URL`
 - **Added Upstash Redis** (optional): `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
 - **Organized variables** by category with clear comments
 
@@ -39,7 +39,7 @@ Successfully migrated the AI interview functionality from `@liftoff/` to `@saas-
 - **Maintained visual design**: Original gradient animation, responsive layout
 
 ### 6. Utilities Integration
-- **Migrated OpenAI Stream utility** to `/lib/interview/openai-stream.ts`
+- **Migrated to Ollama client** at `/lib/interview/ollama-client.ts`
 - **Maintained streaming functionality** for real-time feedback
 - **Preserved TypeScript interfaces** for type safety
 
@@ -81,7 +81,7 @@ Successfully migrated the AI interview functionality from `@liftoff/` to `@saas-
 
 ### New Interview-Specific Dependencies
 - `@ffmpeg/ffmpeg@^0.11.6` - Video/audio processing
-- `openai@^3.2.1` - AI integration
+- Ollama integration - Local AI with Mistral model
 - `react-webcam@^7.0.1` - Camera functionality
 - `formidable@^2.1.1` - File upload parsing
 - `framer-motion@^10.12.5` - Animations
@@ -92,7 +92,7 @@ Successfully migrated the AI interview functionality from `@liftoff/` to `@saas-
 
 ### Immediate Actions
 1. **Install dependencies**: Run `pnpm install` in saas-starter
-2. **Environment setup**: Copy `.env.example` to `.env` and add OpenAI key
+2. **Environment setup**: Copy `.env.example` to `.env` and configure Ollama URL
 3. **Test interview flow**: Verify upload → transcription → feedback pipeline
 4. **UI testing**: Test gradient animation and responsive design
 
@@ -137,7 +137,7 @@ Successfully migrated the AI interview functionality from `@liftoff/` to `@saas-
 
 ### High Risk
 - **Gradient performance**: Complex WebGL component may impact mobile
-- **OpenAI costs**: No rate limiting implemented yet
+- **Ollama availability**: Requires local Ollama instance running
 - **Database persistence**: Currently no storage for interview data
 
 ## Next Steps 🚀

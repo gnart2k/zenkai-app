@@ -1,0 +1,127 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "submit": "Gửi",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước đó",
+    "search": "Tìm kiếm",
+    "filter": "Bộ lọc",
+    "settings": "Cài đặt",
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập",
+    "signup": "Đăng ký",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "name": "Tên",
+    "welcome": "Chào mừng",
+    "error": "Lỗi",
+    "success": "Thành công"
+  },
+  "navigation": {
+    "dashboard": "Bảng điều khiển",
+    "pricing": "Giá cả",
+    "security": "Bảo mật",
+    "general": "Chung",
+    "activity": "Hoạt động",
+    "terminal": "Thiết bị đầu cuối"
+  },
+  "auth": {
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký",
+    "signOut": "Đăng xuất",
+    "alreadyHaveAccount": "Đã có tài khoản?",
+    "dontHaveAccount": "Chưa có tài khoản?",
+    "orContinueWith": "Hoặc tiếp tục với",
+    "forgotPassword": "Quên mật khẩu?",
+    "resetPassword": "Đặt lại mật khẩu"
+  },
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "welcomeBack": "Chào mừng trở lại",
+    "overview": "Tổng quan",
+    "recentActivity": "Hoạt động gần đây",
+    "stats": {
+      "totalUsers": "Tổng người dùng",
+      "activeProjects": "Dự án đang hoạt động",
+      "revenue": "Doanh thu",
+      "growth": "Tăng trưởng"
+    }
+  },
+  "pricing": {
+    "title": "Giá cả",
+    "monthly": "Hàng tháng",
+    "yearly": "Hàng năm",
+    "billingCycle": "Chu kỳ thanh toán",
+    "plans": {
+      "basic": {
+        "name": "Cơ bản",
+        "description": "Hoàn hảo cho cá nhân bắt đầu",
+        "price": "230.000đ"
+      },
+      "pro": {
+        "name": "Chuyên nghiệp",
+        "description": "Tốt nhất cho chuyên gia và nhóm nhỏ",
+        "price": "690.000đ"
+      },
+      "enterprise": {
+        "name": "Doanh nghiệp",
+        "description": "Giải pháp tùy chỉnh cho tổ chức lớn",
+        "price": "Tùy chỉnh"
+      }
+    },
+    "features": {
+      "allBasicFeatures": "Tất cả tính năng Cơ bản",
+      "advancedAnalytics": "Phân tích nâng cao",
+      "prioritySupport": "Hỗ trợ ưu tiên",
+      "customIntegrations": "Tích hợp tùy chỉnh",
+      "dedicatedAccount": "Quản lý tài khoản chuyên trách"
+    },
+    "cta": {
+      "startFree": "Bắt đầu dùng thử miễn phí",
+      "contactSales": "Liên hệ bán hàng",
+      "currentPlan": "Gói hiện tại"
+    }
+  },
+  "interview": {
+    "title": "Phỏng vấn",
+    "startInterview": "Bắt đầu phỏng vấn",
+    "endInterview": "Kết thúc phỏng vấn",
+    "recording": "Đang ghi âm",
+    "transcribing": "Đang chuyển văn bản...",
+    "processing": "Đang xử lý...",
+    "saveResponse": "Lưu phản hồi",
+    "interviewComplete": "Hoàn thành phỏng vấn",
+    "thankYouMessage": "Cảm ơn bạn đã hoàn thành buổi phỏng vấn"
+  },
+  "settings": {
+    "general": {
+      "title": "Cài đặt chung",
+      "personalInfo": "Thông tin cá nhân",
+      "language": "Ngôn ngữ",
+      "theme": "Chủ đề",
+      "notifications": "Thông báo"
+    },
+    "security": {
+      "title": "Cài đặt bảo mật",
+      "changePassword": "Đổi mật khẩu",
+      "twoFactor": "Xác thực hai yếu tố",
+      "activeSessions": "Phiên hoạt động",
+      "loginHistory": "Lịch sử đăng nhập"
+    },
+    "activity": {
+      "title": "Hoạt động",
+      "recentActivity": "Hoạt động gần đây",
+      "allActivity": "Tất cả hoạt động",
+      "filterByDate": "Lọc theo ngày",
+      "exportData": "Xuất dữ liệu"
+    }
+  }
+}

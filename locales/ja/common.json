@@ -1,0 +1,127 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "submit": "送信",
+    "close": "閉じる",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "search": "検索",
+    "filter": "フィルター",
+    "settings": "設定",
+    "profile": "プロフィール",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "signup": "サインアップ",
+    "email": "メール",
+    "password": "パスワード",
+    "confirmPassword": "パスワードを確認",
+    "name": "名前",
+    "welcome": "ようこそ",
+    "error": "エラー",
+    "success": "成功"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "pricing": "料金プラン",
+    "security": "セキュリティ",
+    "general": "一般",
+    "activity": "アクティビティ",
+    "terminal": "ターミナル"
+  },
+  "auth": {
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "signOut": "サインアウト",
+    "alreadyHaveAccount": "既にアカウントをお持ちですか？",
+    "dontHaveAccount": "アカウントをお持ちでない場合",
+    "orContinueWith": "または続ける",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "resetPassword": "パスワードをリセット"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "welcomeBack": "おかえりなさい",
+    "overview": "概要",
+    "recentActivity": "最近のアクティビティ",
+    "stats": {
+      "totalUsers": "総ユーザー数",
+      "activeProjects": "アクティブなプロジェクト",
+      "revenue": "収益",
+      "growth": "成長"
+    }
+  },
+  "pricing": {
+    "title": "料金プラン",
+    "monthly": "月額",
+    "yearly": "年額",
+    "billingCycle": "請求サイクル",
+    "plans": {
+      "basic": {
+        "name": "ベーシック",
+        "description": "始めるのに最適な個人向けプラン",
+        "price": "¥1,000"
+      },
+      "pro": {
+        "name": "プロ",
+        "description": "プロフェッショナルと小規模チームに最適",
+        "price": "¥3,000"
+      },
+      "enterprise": {
+        "name": "エンタープライズ",
+        "description": "大規模組織向けカスタムソリューション",
+        "price": "カスタム"
+      }
+    },
+    "features": {
+      "allBasicFeatures": "すべてのベーシック機能",
+      "advancedAnalytics": "高度な分析",
+      "prioritySupport": "優先サポート",
+      "customIntegrations": "カスタム統合",
+      "dedicatedAccount": "専用アカウントマネージャー"
+    },
+    "cta": {
+      "startFree": "無料トライアルを開始",
+      "contactSales": "営業担当者に連絡",
+      "currentPlan": "現在のプラン"
+    }
+  },
+  "interview": {
+    "title": "インタビュー",
+    "startInterview": "インタビュー開始",
+    "endInterview": "インタビュー終了",
+    "recording": "録音中",
+    "transcribing": "文字起こし中...",
+    "processing": "処理中...",
+    "saveResponse": "回答を保存",
+    "interviewComplete": "インタビュー完了",
+    "thankYouMessage": "インタビューにご協力いただきありがとうございます"
+  },
+  "settings": {
+    "general": {
+      "title": "一般設定",
+      "personalInfo": "個人情報",
+      "language": "言語",
+      "theme": "テーマ",
+      "notifications": "通知"
+    },
+    "security": {
+      "title": "セキュリティ設定",
+      "changePassword": "パスワード変更",
+      "twoFactor": "二要素認証",
+      "activeSessions": "アクティブセッション",
+      "loginHistory": "ログイン履歴"
+    },
+    "activity": {
+      "title": "アクティビティ",
+      "recentActivity": "最近のアクティビティ",
+      "allActivity": "すべてのアクティビティ",
+      "filterByDate": "日付でフィルター",
+      "exportData": "データをエクスポート"
+    }
+  }
+}

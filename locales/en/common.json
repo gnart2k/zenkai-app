@@ -1,0 +1,127 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
+    "welcome": "Welcome",
+    "error": "Error",
+    "success": "Success"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "pricing": "Pricing",
+    "security": "Security",
+    "general": "General",
+    "activity": "Activity",
+    "terminal": "Terminal"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "orContinueWith": "Or continue with",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset password"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcomeBack": "Welcome back",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeProjects": "Active Projects",
+      "revenue": "Revenue",
+      "growth": "Growth"
+    }
+  },
+  "pricing": {
+    "title": "Pricing",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "billingCycle": "Billing Cycle",
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "description": "Perfect for individuals getting started",
+        "price": "$9"
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Best for professionals and small teams",
+        "price": "$29"
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "Custom solutions for large organizations",
+        "price": "Custom"
+      }
+    },
+    "features": {
+      "allBasicFeatures": "All Basic features",
+      "advancedAnalytics": "Advanced analytics",
+      "prioritySupport": "Priority support",
+      "customIntegrations": "Custom integrations",
+      "dedicatedAccount": "Dedicated account manager"
+    },
+    "cta": {
+      "startFree": "Start free trial",
+      "contactSales": "Contact sales",
+      "currentPlan": "Current plan"
+    }
+  },
+  "interview": {
+    "title": "Interview",
+    "startInterview": "Start Interview",
+    "endInterview": "End Interview",
+    "recording": "Recording",
+    "transcribing": "Transcribing...",
+    "processing": "Processing...",
+    "saveResponse": "Save Response",
+    "interviewComplete": "Interview Complete",
+    "thankYouMessage": "Thank you for completing the interview"
+  },
+  "settings": {
+    "general": {
+      "title": "General Settings",
+      "personalInfo": "Personal Information",
+      "language": "Language",
+      "theme": "Theme",
+      "notifications": "Notifications"
+    },
+    "security": {
+      "title": "Security Settings",
+      "changePassword": "Change Password",
+      "twoFactor": "Two-Factor Authentication",
+      "activeSessions": "Active Sessions",
+      "loginHistory": "Login History"
+    },
+    "activity": {
+      "title": "Activity",
+      "recentActivity": "Recent Activity",
+      "allActivity": "All Activity",
+      "filterByDate": "Filter by date",
+      "exportData": "Export Data"
+    }
+  }
+}

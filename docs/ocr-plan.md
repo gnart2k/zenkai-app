@@ -1,612 +1,520 @@
-# OCR Services Implementation Plan
+# OCR Service Integration Plan for Zenkai
 
 ## 🎯 Objective
-Implement OCR services to extract text from Job Descriptions (JD) and CVs/resumes for parsing and analysis.
+Integrate OCR services to extract text from documents (resumes, job descriptions) **without touching main interview flow**. Focus on implementing common services and UI components for document processing.
 
-## 📋 Requirements Analysis
+## 📋 Current Setup Analysis
 
-### Supported Document Types
-- **PDF** documents
-- **Image formats**: PNG, JPG, JPEG, WebP
-- **Word documents**: DOCX
-- **Scanned documents** with text layers
+### Existing Architecture
+- **Framework**: Next.js 15 with App Router
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: JWT-based with HTTP-only cookies
+- **File Handling**: Using formidable for form parsing
+- **Interview System**: Video recording + transcription + AI feedback
+- **OCR Service**: External service at `http://localhost:8000/extract-text`
 
-### Languages to Support
-- **English** (Primary)
-- **Japanese** (Secondary)
-- **Korean** (Secondary) 
-- **Vietnamese** (Secondary)
+### Integration Scope
+- **✅ Implement**: OCR services, file upload, text extraction, document analysis
+- **❌ Don't Touch**: Main interview flow, existing transcription, feedback generation
+- **🎯 Focus**: Standalone OCR functionality with test page
 
-### Use Cases
-1. **Job Description Upload** - Extract job requirements, responsibilities, qualifications
-2. **CV/Resume Upload** - Extract candidate experience, skills, education
-3. **Document Analysis** - Match JD requirements with CV content
-4. **Data Processing** - Convert extracted text to structured data
+### Current OCR Test Script
+```bash
+# Test script available at docs/ocr-test.sh
+OCR_SERVICE_URL="http://localhost:8000/extract-text"
+PDF_FILE="Trang_Duong_Resume.pdf"
 
-## 🛠️ Technical Implementation
-
-### 1. OCR Service Options
-
-#### Option A: Tesseract.js (Client-side)
-**Pros:**
-- Free, open-source
-- Works entirely client-side (privacy)
-- No API costs
-- Supports multiple languages
-- Works offline
-
-**Cons:**
-- Lower accuracy than cloud services
-- Limited to text recognition
-- No document layout analysis
-
-#### Option B: Cloud OCR Services
-**Google Vision API:**
-- High accuracy (95%+)
-- Supports handwriting
-- Document layout understanding
-- Language auto-detection
-- Scales well
-
-**Amazon Textract:**
-- Excellent for forms/documents
-- Structured data extraction
-- Table/form recognition
-- Pricing per page
-
-**Azure Computer Vision:**
-- Good accuracy (90%+)
-- Receipt/document analysis
-- Reasonable pricing
-- Good enterprise support
-
-#### Option C: Hybrid Approach
-- **Client-side**: Tesseract for quick previews
-- **Server-side**: Cloud API for high-accuracy processing
-- **Fallback**: Tesseract if cloud service fails
-
-### 2. Recommended Architecture
-
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Backend API    │    │   OCR Service  │
-│                 │    │                  │    │                 │
-│ File Upload     │───▶│ Upload Handler   │───▶│ Tesseract.js    │
-│ Preview         │    │ File Validation  │    │ Google Vision   │
-│ Progress        │    │ OCR Processing   │    │ Amazon Textract │
-│ Results         │    │ Text Extraction  │    │ Azure Vision    │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
+curl -X POST \
+    -F "file=@$PDF_FILE" \
+    -F "extract_text=true" \
+    -F "extract_tables=true" \
+    -F "extract_images=true" \
+    "$OCR_SERVICE_URL"
 ```
 
-## 📁 File Structure Plan
+## 🛠️ Technical Implementation Strategy
+
+### 1. Server Actions Approach
+Following Zenkai's existing patterns, we'll use Server Actions for OCR functionality:
+
+### 2. File Structure Plan
 
 ```
 lib/
 ├── ocr/
-│   ├── services/
-│   │   ├── tesseract.ts      # Client-side OCR
-│   │   ├── google-vision.ts   # Google Vision API
-│   │   └── aws-textract.ts    # AWS Textract API
-│   ├── parsers/
-│   │   ├── jd-parser.ts       # JD text parsing
-│   │   ├── cv-parser.ts       # CV text parsing
-│   │   └── common.ts         # Common utilities
-│   ├── processors/
-│   │   ├── image-prep.ts     # Image preprocessing
-│   │   ├── text-cleaner.ts   # Text cleaning
-│   │   └── pdf-handler.ts    # PDF processing
-│   └── types.ts             # OCR type definitions
+│   ├── actions.ts              # Server actions for OCR
+│   ├── types.ts                # OCR type definitions
+│   ├── utils.ts                # OCR utility functions
+│   └── validation.ts           # File validation
 │
 components/
 ├── ocr/
-│   ├── FileUpload.tsx        # File upload component
-│   ├── DocumentPreview.tsx    # Preview uploaded docs
-│   ├── OcrProgress.tsx       # Processing progress
-│   ├── TextExtractor.tsx      # OCR result display
-│   └── DocumentAnalyzer.tsx   # JD/CV analysis
+│   ├── DocumentUpload.tsx      # File upload component
+│   ├── ExtractedText.tsx       # Extracted text display
+│   └── DocumentAnalysis.tsx    # Document analysis results
 │
 app/
-├── api/
-│   ├── ocr/
-│   │   ├── upload/
-│   │   │   └── route.ts       # File upload endpoint
-│   │   ├── process/
-│   │   │   └── route.ts       # OCR processing endpoint
-│   │   └── extract/
-│   │       └── route.ts       # Text extraction endpoint
-│   └── upload/
-│       └── route.ts           # Legacy upload endpoint
-│
-└── (dashboard)/
-    ├── documents/
-    │   ├── page.tsx           # Document management
-    │   ├── upload/
-    │   │   └── page.tsx       # Document upload UI
-    │   └── analyze/
-    │       └── page.tsx       # Document analysis
+├── (dashboard)/
+│   └── ocr-test/              # OCR test page
+│       └── page.tsx           # Standalone OCR testing interface
 ```
 
-## 🚀 Implementation Phases
+## 📋 Implementation Backlog
 
-### Phase 1: Core Infrastructure (Week 1)
+### Core OCR Infrastructure
+- [ ] **Set up OCR server actions** (`lib/ocr/actions.ts`)
+- [ ] **Create OCR type definitions** (`lib/ocr/types.ts`) 
+- [ ] **Create OCR utility functions** (`lib/ocr/utils.ts`)
+- [ ] **Add file validation utilities** (`lib/ocr/validation.ts`)
 
-#### 1.1 Dependencies Setup
-```bash
-# OCR Libraries
-npm install tesseract.js
-npm install @aws-sdk/client-textract
-npm install @google-cloud/vision
-npm install azure-cognitiveservices-computervision
+### UI Components
+- [ ] **Implement document upload component** (`components/ocr/DocumentUpload.tsx`)
+- [ ] **Create extracted text display component** (`components/ocr/ExtractedText.tsx`)
 
-# PDF/Image Processing
-npm install pdf-parse
-npm install pdf2pic
-npm install sharp
-npm install canvas
+### Test Page
+- [ ] **Create OCR test page** (`app/(dashboard)/ocr-test/page.tsx`)
 
-# File Upload
-npm install multer
-npm install file-type
-npm install @types/multer
-```
+### Configuration
+- [ ] **Add environment variables for OCR service configuration**
 
-#### 1.2 Type Definitions
+## 🚀 Core Implementation Details
+
+### Type Definitions
 ```typescript
 // lib/ocr/types.ts
-export interface OcrResult {
+export interface OCRRequest {
+  file: File;
+  extractText: boolean;
+  extractTables: boolean;
+  extractImages: boolean;
+}
+
+export interface OCRResult {
   text: string;
-  confidence: number;
-  language: string;
-  blocks?: TextBlock[];
+  tables?: TableData[];
+  images?: ImageData[];
   metadata: {
-    pageCount: number;
+    fileName: string;
+    fileSize: number;
     processingTime: number;
-    service: string;
+    extractedAt: Date;
   };
 }
 
-export interface TextBlock {
-  text: string;
-  boundingBox: BoundingBox;
+export interface DocumentAnalysis {
+  type: 'resume' | 'job-description' | 'unknown';
+  extractedData: {
+    personalInfo?: PersonalInfo;
+    experience?: ExperienceEntry[];
+    education?: EducationEntry[];
+    skills?: string[];
+    requirements?: string[];
+    responsibilities?: string[];
+  };
   confidence: number;
-  type: 'paragraph' | 'heading' | 'list' | 'table';
 }
 
-export interface JDData {
-  title: string;
-  company: string;
-  location: string;
-  requirements: string[];
-  responsibilities: string[];
-  qualifications: string[];
-  skills: string[];
-  salary?: string;
-  experience: string;
+export interface PersonalInfo {
+  name?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
 }
 
-export interface CVData {
-  personalInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    location: string;
-  };
-  summary: string;
-  experience: Experience[];
-  education: Education[];
-  skills: string[];
-  languages: string[];
-  certifications: Certification[];
+export interface ExperienceEntry {
+  title?: string;
+  company?: string;
+  duration?: string;
+  description?: string;
+}
+
+export interface EducationEntry {
+  degree?: string;
+  institution?: string;
+  year?: string;
+  gpa?: string;
 }
 ```
 
-#### 1.3 Basic OCR Service
+### Server Actions Implementation
 ```typescript
-// lib/ocr/services/tesseract.ts
-import Tesseract from 'tesseract.js';
+// lib/ocr/actions.ts
+'use server';
 
-export class TesseractService {
-  async extractText(imageFile: File): Promise<OcrResult> {
-    const result = await Tesseract.recognize(imageFile, 'eng+jpn+kor+vie', {
-      logger: m => console.log(m),
-    });
+import { z } from 'zod';
+
+export async function extractDocumentText(formData: FormData) {
+  try {
+    const file = formData.get('file') as File;
     
-    return {
-      text: result.data.text,
-      confidence: result.data.confidence,
-      language: 'auto',
-      blocks: this.parseTextBlocks(result.data),
-      metadata: {
-        pageCount: 1,
-        processingTime: result.data.time,
-        service: 'tesseract'
-      }
-    };
-  }
-}
-```
+    if (!file) {
+      return { error: 'No file provided' };
+    }
 
-### Phase 2: File Processing (Week 2)
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      return { error: 'Invalid file type. Only PDF and images are allowed.' };
+    }
 
-#### 2.1 File Upload Handler
-```typescript
-// app/api/ocr/upload/route.ts
-export async function POST(request: Request) {
-  const formData = await request.formData();
-  const file = formData.get('file') as File;
-  
-  // Validate file type
-  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-  if (!allowedTypes.includes(file.type)) {
-    return Response.json({ error: 'Invalid file type' }, { status: 400 });
-  }
-  
-  // Process file with appropriate OCR
-  const ocrResult = await processFile(file);
-  
-  return Response.json({ success: true, data: ocrResult });
-}
-```
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      return { error: 'File size too large. Maximum size is 10MB.' };
+    }
 
-#### 2.2 Document Processing Pipeline
-```typescript
-// lib/ocr/processors/pipeline.ts
-export async function processDocument(file: File): Promise<OcrResult> {
-  // 1. Determine file type and preprocessing
-  const processedFile = await preprocessFile(file);
-  
-  // 2. Choose OCR service
-  const ocrService = selectOcrService(file);
-  
-  // 3. Extract text
-  const ocrResult = await ocrService.extractText(processedFile);
-  
-  // 4. Post-process text
-  const cleanedText = await cleanExtractedText(ocrResult.text);
-  
-  return { ...ocrResult, text: cleanedText };
-}
-```
+    // Prepare form data for OCR service
+    const ocrFormData = new FormData();
+    ocrFormData.append('file', file);
+    ocrFormData.append('extract_text', 'true');
+    ocrFormData.append('extract_tables', 'true');
+    ocrFormData.append('extract_images', 'true');
 
-### Phase 3: JD/CV Parsing (Week 3)
-
-#### 3.1 Job Description Parser
-```typescript
-// lib/ocr/parsers/jd-parser.ts
-export class JDParser {
-  parse(text: string): JDData {
-    return {
-      title: this.extractTitle(text),
-      company: this.extractCompany(text),
-      requirements: this.extractRequirements(text),
-      responsibilities: this.extractResponsibilities(text),
-      skills: this.extractSkills(text),
-      // ... other fields
-    };
-  }
-  
-  private extractTitle(text: string): string {
-    // Use regex patterns to find job titles
-    const titlePatterns = [
-      /(?:job title|position):\s*(.+)/i,
-      /^(.+)\s+(manager|developer|engineer|analyst)/i
-    ];
-    // Implementation...
-  }
-}
-```
-
-#### 3.2 CV Parser
-```typescript
-// lib/ocr/parsers/cv-parser.ts
-export class CVParser {
-  parse(text: string): CVData {
-    return {
-      personalInfo: this.extractPersonalInfo(text),
-      experience: this.extractExperience(text),
-      education: this.extractEducation(text),
-      skills: this.extractSkills(text),
-      // ... other fields
-    };
-  }
-  
-  private extractExperience(text: string): Experience[] {
-    // Use patterns to find work experience sections
-    // Handle different CV formats
-  }
-}
-```
-
-### Phase 4: UI Components (Week 4)
-
-#### 4.1 File Upload Component
-```typescript
-// components/ocr/FileUpload.tsx
-export function FileUpload() {
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [ocrResults, setOcrResults] = useState<OcrResult | null>(null);
-  
-  const handleFileUpload = async (file: File) => {
-    // 1. Validate file
-    if (!validateFile(file)) return;
+    // Call OCR service
+    const ocrServiceUrl = process.env.OCR_SERVICE_URL || 'http://localhost:8000/extract-text';
     
-    // 2. Upload to API
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const result = await fetch('/api/ocr/upload', {
+    const response = await fetch(ocrServiceUrl, {
       method: 'POST',
-      body: formData,
-    }).then(res => res.json());
-    
-    // 3. Parse results
-    if (result.success) {
-      setOcrResults(result.data);
+      body: ocrFormData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`OCR service error: ${response.statusText}`);
     }
-  };
-  
-  return (
-    <div>
-      <FileInput onFileSelect={handleFileUpload} />
-      <ProgressBar progress={uploadProgress} />
-      {ocrResults && <OcrResultsDisplay results={ocrResults} />}
-    </div>
-  );
+
+    const result = await response.json();
+    
+    return { success: true, data: result };
+
+  } catch (error) {
+    console.error('OCR processing error:', error);
+    return { 
+      error: 'Failed to process document. Please try again.',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
 }
 ```
 
-#### 4.2 Document Analysis Component
+### Document Upload Component
 ```typescript
-// components/ocr/DocumentAnalyzer.tsx
-export function DocumentAnalyzer() {
-  const [jdData, setJdData] = useState<JDData | null>(null);
-  const [cvData, setCvData] = useState<CVData | null>(null);
-  const [matchResults, setMatchResults] = useState<MatchResults | null>(null);
-  
-  const analyzeMatch = () => {
-    if (jdData && cvData) {
-      const results = calculateMatch(jdData, cvData);
-      setMatchResults(results);
-    }
-  };
-  
-  return (
-    <div className="grid grid-cols-2 gap-4">
-      <JDDisplay data={jdData} />
-      <CVDisplay data={cvData} />
-      <MatchAnalysis results={matchResults} />
-    </div>
-  );
-}
-```
+// components/ocr/DocumentUpload.tsx
+'use client';
 
-### Phase 5: Advanced Features (Week 5-6)
+import { useState } from 'react';
+import { extractDocumentText } from '@/lib/ocr/actions';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
-#### 5.1 Multiple OCR Services Integration
-```typescript
-// lib/ocr/services/orchestrator.ts
-export class OcrOrchestrator {
-  async processWithFallback(file: File): Promise<OcrResult> {
-    const services = [
-      new GoogleVisionService(),
-      new TesseractService(),
-      new AzureVisionService()
-    ];
-    
-    for (const service of services) {
-      try {
-        const result = await service.extractText(file);
-        if (result.confidence > 80) {
-          return result;
-        }
-      } catch (error) {
-        console.log(`Service ${service.name} failed, trying next...`);
+export function DocumentUpload({ onTextExtracted }: { 
+  onTextExtracted: (text: string) => void 
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const result = await extractDocumentText(formData);
+      
+      if (result.success) {
+        onTextExtracted(result.data.text);
+      } else {
+        setError(result.error || 'Upload failed');
       }
+    } catch (error) {
+      setError('Upload error occurred');
+      console.error('Upload error:', error);
+    } finally {
+      setUploading(false);
     }
-    
-    throw new Error('All OCR services failed');
-  }
+  };
+
+  return (
+    <Card className="p-6">
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <input
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={handleFileUpload}
+          disabled={uploading}
+          className="hidden"
+          id="file-upload"
+        />
+        <label htmlFor="file-upload" className="cursor-pointer">
+          <div className="space-y-4">
+            <div className="text-4xl">📄</div>
+            <div>
+              <p className="text-lg font-medium">Upload Document</p>
+              <p className="text-sm text-gray-500">
+                PDF, JPG, or PNG files up to 10MB
+              </p>
+            </div>
+            <Button disabled={uploading}>
+              {uploading ? 'Processing...' : 'Choose File'}
+            </Button>
+          </div>
+        </label>
+        
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
 }
 ```
 
-#### 5.2 Language Detection & Translation
+### Extracted Text Display Component
 ```typescript
-// lib/ocr/processors/language-detector.ts
-export async function detectAndTranslate(text: string): Promise<{
-  detectedLanguage: string;
-  translatedText: string;
-}> {
-  // Detect language
-  const detected = await detectLanguage(text);
-  
-  // Translate if not English
-  if (detected !== 'en') {
-    const translated = await translateText(text, 'en');
-    return { detectedLanguage: detected, translatedText: translated };
-  }
-  
-  return { detectedLanguage: detected, translatedText: text };
+// components/ocr/ExtractedText.tsx
+'use client';
+
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+interface ExtractedTextProps {
+  text: string;
+  type?: 'resume' | 'job-description' | 'unknown';
+}
+
+export function ExtractedText({ text, type }: ExtractedTextProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const getDocumentTypeColor = () => {
+    switch (type) {
+      case 'resume': return 'bg-blue-100 text-blue-800';
+      case 'job-description': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <Card className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold">Extracted Text</h3>
+        <div className="flex items-center gap-2">
+          {type && (
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDocumentTypeColor()}`}>
+              {type === 'resume' ? 'Resume' : type === 'job-description' ? 'Job Description' : 'Unknown'}
+            </span>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopy}
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </Button>
+        </div>
+      </div>
+      
+      <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
+        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono">
+          {text}
+        </pre>
+      </div>
+      
+      <div className="mt-4 text-sm text-gray-500">
+        Characters: {text.length} | Words: {text.split(/\s+/).filter(word => word.length > 0).length}
+      </div>
+    </Card>
+  );
 }
 ```
 
-## 🔧 Configuration & Environment
+### OCR Test Page
+```typescript
+// app/(dashboard)/ocr-test/page.tsx
+'use client';
+
+import { useState } from 'react';
+import { DocumentUpload } from '@/components/ocr/DocumentUpload';
+import { ExtractedText } from '@/components/ocr/ExtractedText';
+import { detectDocumentType } from '@/lib/ocr/utils';
+
+export default function OCRTestPage() {
+  const [extractedText, setExtractedText] = useState('');
+  const [processing, setProcessing] = useState(false);
+
+  const handleTextExtracted = (text: string) => {
+    setExtractedText(text);
+    setProcessing(false);
+  };
+
+  const documentType = extractedText ? detectDocumentType(extractedText) : null;
+
+  return (
+    <div className="container mx-auto py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">OCR Test Page</h1>
+        <p className="text-gray-600">
+          Test OCR functionality by uploading documents and viewing extracted text.
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          Documents are processed using the external OCR service at {process.env.OCR_SERVICE_URL || 'http://localhost:8000/extract-text'}
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="space-y-6">
+          <DocumentUpload onTextExtracted={handleTextExtracted} />
+          
+          {processing && (
+            <Card className="p-6">
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3">Processing document...</span>
+              </div>
+            </Card>
+          )}
+        </div>
+        
+        <div>
+          {extractedText && (
+            <ExtractedText text={extractedText} type={documentType} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+## 🔧 Configuration
 
 ### Environment Variables
 ```env
-# Google Vision
-GOOGLE_VISION_API_KEY=your_api_key_here
-GOOGLE_VISION_PROJECT_ID=your_project_id
+# OCR Service Configuration
+OCR_SERVICE_URL=http://localhost:8000/extract-text
+OCR_SERVICE_TIMEOUT=30000
 
-# AWS Textract
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_REGION=us-east-1
-
-# Azure Vision
-AZURE_COGNITIVE_SERVICES_KEY=your_key
-AZURE_COGNITIVE_SERVICES_ENDPOINT=your_endpoint
-
-# File Upload Limits
+# File Upload Settings
 MAX_FILE_SIZE=10485760  # 10MB
-ALLOWED_FILE_TYPES=pdf,jpg,jpeg,png,docx
+ALLOWED_FILE_TYPES=pdf,jpg,jpeg,png
 ```
 
-### OCR Service Configuration
+### OCR Service Utilities
 ```typescript
-// config/ocr.ts
-export const OCR_CONFIG = {
-  defaultService: 'tesseract',
-  fallbackServices: ['google', 'azure'],
-  confidenceThreshold: 75,
-  maxFileSize: 10 * 1024 * 1024, // 10MB
-  supportedLanguages: ['en', 'ja', 'ko', 'vi'],
-  preprocessing: {
-    enableContrastEnhancement: true,
-    enableNoiseReduction: true,
-    enableSkewCorrection: true
-  }
-};
-```
-
-## 📊 Performance & Scaling
-
-### Client-side Processing
-- **Pros**: Privacy, no server costs, offline capability
-- **Cons**: Limited by device performance
-- **Best for**: Small files, privacy-sensitive docs
-
-### Server-side Processing  
-- **Pros**: Higher accuracy, unlimited power, async processing
-- **Cons**: Server costs, privacy considerations
-- **Best for**: Large files, high accuracy needs
-
-### Hybrid Strategy
-```typescript
-export async function selectProcessingStrategy(file: File): Promise<'client' | 'server'> {
-  // Small files < 2MB: Client-side (Tesseract)
-  if (file.size < 2 * 1024 * 1024) return 'client';
+// lib/ocr/utils.ts
+export function detectDocumentType(text: string): 'resume' | 'job-description' | 'unknown' {
+  const resumeIndicators = [
+    'experience', 'education', 'skills', 'summary', 
+    'work history', 'employment', 'qualifications'
+  ];
   
-  // Large files or low accuracy needed: Server-side
-  return 'server';
+  const jobDescIndicators = [
+    'requirements', 'responsibilities', 'qualifications',
+    'job description', 'position', 'role', 'company'
+  ];
+  
+  const resumeScore = resumeIndicators.filter(word => 
+    text.toLowerCase().includes(word)).length;
+  const jobDescScore = jobDescIndicators.filter(word => 
+    text.toLowerCase().includes(word)).length;
+  
+  if (resumeScore > jobDescScore) return 'resume';
+  if (jobDescScore > resumeScore) return 'job-description';
+  return 'unknown';
+}
+
+export function extractEmails(text: string): string[] {
+  const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+  const matches = text.match(emailPattern);
+  return matches || [];
+}
+
+export function extractPhones(text: string): string[] {
+  const phonePattern = /(\+?1[-.\s]?)?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}/g;
+  const matches = text.match(phonePattern);
+  return matches || [];
 }
 ```
+
+## 📊 Success Metrics
+
+### Technical Metrics
+- **OCR Processing Time**: < 10 seconds for standard documents
+- **File Upload Success Rate**: > 95%
+- **Document Detection Accuracy**: > 90%
+- **Integration Stability**: < 1% error rate
+
+### User Experience Metrics
+- **Upload Completion Rate**: > 85%
+- **Test Page Usage**: Track usage of OCR test functionality
+
+## 📋 Key Requirements
+
+1. **Server Actions**: Use Next.js server actions, not API routes
+2. **TypeScript**: Full type safety with proper interfaces
+3. **Error Handling**: Graceful failures with user feedback
+4. **Validation**: File type and size validation
+5. **Standalone**: No modifications to main interview flow
+6. **Test Page**: Dedicated testing interface
+7. **Security**: Proper file validation and sanitization
 
 ## 🧪 Testing Strategy
 
 ### Unit Tests
 ```typescript
-// tests/ocr/tesseract.test.ts
-describe('TesseractService', () => {
-  test('should extract text from image', async () => {
-    const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
-    const result = await tesseractService.extractText(mockFile);
-    
-    expect(result.text).toContain('test');
-    expect(result.confidence).toBeGreaterThan(50);
+// tests/ocr/utils.test.ts
+describe('OCR Utils', () => {
+  test('detectDocumentType should identify resumes correctly', () => {
+    const resumeText = 'John Doe\nExperience: 5 years at Company\nEducation: BS Computer Science';
+    const result = detectDocumentType(resumeText);
+    expect(result).toBe('resume');
   });
 });
 ```
 
 ### Integration Tests
 ```typescript
-// tests/ocr/api.test.ts
-describe('OCR API', () => {
-  test('POST /api/ocr/upload', async () => {
+// tests/ocr/actions.test.ts
+describe('OCR Actions', () => {
+  test('extractDocumentText should process files correctly', async () => {
+    const mockFile = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
     const formData = new FormData();
-    formData.append('file', mockPdfFile);
+    formData.append('file', mockFile);
     
-    const response = await fetch('/api/ocr/upload', {
-      method: 'POST',
-      body: formData
-    });
-    
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data.success).toBe(true);
+    const result = await extractDocumentText(formData);
+    expect(result.success).toBe(true);
   });
 });
 ```
 
-### Performance Tests
-- **Benchmark OCR accuracy** across different document types
-- **Test file size limits** and performance degradation
-- **Validate language support** for all 4 languages
-- **Stress test** with concurrent uploads
+## 📁 Implementation Priority
 
-## 📈 Success Metrics
+### High Priority
+1. Server Actions implementation
+2. Type definitions  
+3. Document upload component
+4. OCR test page
 
-### Accuracy Targets
-- **English documents**: 95%+ accuracy
-- **Japanese documents**: 90%+ accuracy  
-- **Korean documents**: 90%+ accuracy
-- **Vietnamese documents**: 90%+ accuracy
+### Medium Priority
+5. Utility functions
+6. Extracted text display component
+7. File validation utilities
 
-### Performance Targets
-- **File upload**: < 2 seconds for 5MB files
-- **OCR processing**: < 10 seconds for standard documents
-- **API response**: < 15 seconds total processing time
-- **UI responsiveness**: No blocking during processing
-
-### User Experience Goals
-- **Intuitive upload**: Drag & drop, progress bars
-- **Real-time feedback**: Processing status updates
-- **Error handling**: Graceful failures with alternatives
-- **Mobile support**: Responsive design for all devices
-
-## 🚦 Deployment Considerations
-
-### Security
-- **File validation**: Type, size, content scanning
-- **Rate limiting**: Prevent abuse of OCR services
-- **Data privacy**: Auto-delete processed files after 24h
-- **API key security**: Environment variables, rotation
-
-### Monitoring & Logging
-- **OCR success rates** by service and language
-- **Processing times** and bottlenecks
-- **Error rates** and failure patterns
-- **User analytics**: Document types, success rates
-
-### Cost Management
-- **OCR service costs**: Monitor API usage
-- **Storage costs**: Automatic cleanup policies  
-- **Bandwidth costs**: Optimize file sizes
-- **Backup services**: Fallback strategies
-
-## 📋 Implementation Checklist
-
-### Phase 1: Core Infrastructure ☐
-- [ ] Install OCR dependencies
-- [ ] Set up type definitions
-- [ ] Implement Tesseract service
-- [ ] Create basic API endpoints
-
-### Phase 2: File Processing ☐
-- [ ] File upload handler
-- [ ] Document preprocessing pipeline
-- [ ] PDF processing support
-- [ ] Image preprocessing
-
-### Phase 3: JD/CV Parsing ☐
-- [ ] JD parser implementation
-- [ ] CV parser implementation
-- [ ] Structured data extraction
-- [ ] Validation and error handling
-
-### Phase 4: UI Components ☐
-- [ ] File upload component
-- [ ] OCR progress display
-- [ ] Results visualization
-- [ ] Document analysis interface
-
-### Phase 5: Advanced Features ☐
-- [ ] Multiple OCR services
-- [ ] Language detection
-- [ ] Translation support
-- [ ] Performance optimization
+### Low Priority
+8. Environment variables configuration
+9. Error handling improvements
+10. Progress indicators
 
 ---
 
-**Timeline**: 6 weeks total
-**Team Size**: 1-2 developers
-**Budget**: $0-500/month (depending on OCR services chosen)
+This plan provides a focused roadmap for implementing OCR services in Zenkai as a standalone feature with a dedicated test page, without affecting the main interview flow.

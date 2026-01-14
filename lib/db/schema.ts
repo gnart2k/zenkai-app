@@ -5,6 +5,8 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -68,15 +70,59 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const jobPostings = pgTable('job_postings', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  status: text('status', { enum: ['draft', 'published', 'archived'] })
+    .default('draft')
+    .notNull(),
+  isPublic: boolean('is_public').default(false).notNull(),
+  interviewConfig: jsonb('interview_config'), // { "questionCount": 5, "language": "en" }
+  teamId: integer('team_id').references(() => teams.id),
+  createdById: integer('created_by_id').references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const candidates = pgTable('candidates', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  cvUrl: text('cv_url'), // Link to stored CV file
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const applications = pgTable('applications', {
+  id: serial('id').primaryKey(),
+  jobPostingId: integer('job_posting_id')
+    .references(() => jobPostings.id)
+    .notNull(),
+  candidateId: integer('candidate_id')
+    .references(() => candidates.id)
+    .notNull(),
+  status: text('status', {
+    enum: ['applied', 'interviewing', 'offered', 'rejected', 'hired'],
+  })
+    .default('applied')
+    .notNull(),
+  interviewScore: integer('interview_score'),
+  interviewFeedback: jsonb('interview_feedback'),
+  interviewVideoUrl: text('interview_video_url'),
+  appliedAt: timestamp('applied_at').defaultNow().notNull(),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
   invitations: many(invitations),
+  jobPostings: many(jobPostings),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
+  jobPostingsCreated: many(jobPostings),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -112,6 +158,33 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const jobPostingsRelations = relations(jobPostings, ({ one, many }) => ({
+  team: one(teams, {
+    fields: [jobPostings.teamId],
+    references: [teams.id],
+  }),
+  createdBy: one(users, {
+    fields: [jobPostings.createdById],
+    references: [users.id],
+  }),
+  applications: many(applications),
+}));
+
+export const candidatesRelations = relations(candidates, ({ many }) => ({
+  applications: many(applications),
+}));
+
+export const applicationsRelations = relations(applications, ({ one }) => ({
+  jobPosting: one(jobPostings, {
+    fields: [applications.jobPostingId],
+    references: [jobPostings.id],
+  }),
+  candidate: one(candidates, {
+    fields: [applications.candidateId],
+    references: [candidates.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -122,6 +195,13 @@ export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
+export type JobPosting = typeof jobPostings.$inferSelect;
+export type NewJobPosting = typeof jobPostings.$inferInsert;
+export type Candidate = typeof candidates.$inferSelect;
+export type NewCandidate = typeof candidates.$inferInsert;
+export type Application = typeof applications.$inferSelect;
+export type NewApplication = typeof applications.$inferInsert;
+
 export type TeamDataWithMembers = Team & {
   teamMembers: (TeamMember & {
     user: Pick<User, 'id' | 'name' | 'email'>;

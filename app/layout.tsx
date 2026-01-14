@@ -1,9 +1,9 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
-import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 import { I18nProvider } from '@/components/I18nProvider';
+import { getTeamForUser, getUser } from '@/lib/core/db/queries';
 
 export const metadata: Metadata = {
   title: 'Zenkai',

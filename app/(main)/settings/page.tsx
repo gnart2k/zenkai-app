@@ -9,10 +9,10 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card';
-import { customerPortalAction } from '@/lib/payments/actions';
+import { customerPortalAction } from '@/lib/features/payments/actions';
 import { useActionState } from 'react';
-import { TeamDataWithMembers, User } from '@/lib/db/schema';
-import { removeTeamMember, inviteTeamMember } from '@/app/(login)/actions';
+import { TeamDataWithMembers, User } from '@/lib/core/db/schema';
+import { removeTeamMember, inviteTeamMember } from '@/lib/features/team/actions';
 import useSWR from 'swr';
 import { Suspense } from 'react';
 import { Input } from '@/components/ui/input';
@@ -250,7 +250,7 @@ function InviteTeamMember() {
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Inviting...
-              </>
+              </> 
             ) : (
               <>
                 <PlusCircle className="mr-2 h-4 w-4" />

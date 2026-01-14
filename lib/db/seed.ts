@@ -1,3 +1,4 @@
+import 'server-only';
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
 import { users, teams, teamMembers } from './schema';

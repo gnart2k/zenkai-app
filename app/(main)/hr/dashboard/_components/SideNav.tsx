@@ -12,10 +12,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { signOut } from '@/app/(login)/actions';
 import useSWR, { mutate } from 'swr';
 import { User } from '@/lib/db/schema';
 import { Suspense } from 'react';
+import { signOut } from '@/lib/features/auth/actions';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -32,7 +32,7 @@ function UserNav() {
     const router = useRouter();
 
     async function handleSignOut() {
-        await signOut();
+    await signOut();
         mutate('/api/user');
         router.push('/');
     }

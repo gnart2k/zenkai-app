@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { and, eq, sql } from 'drizzle-orm';
-import { db } from '@/lib/core/db/drizzle';
+import { db } from '@/lib/db/drizzle';
 import {
   User,
   users,
@@ -15,34 +15,18 @@ import {
   type NewActivityLog,
   ActivityType,
   invitations
-} from '@/lib/core/db/schema';
-import { comparePasswords, hashPassword, setSession } from '@/lib/core/auth/session';
+} from '@/lib/db/schema';
+import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createCheckoutSession } from '@/lib/features/payments/api';
-import { getUser, getUserWithTeam } from '@/lib/core/db/queries';
+// import { createCheckoutSession } from '@/lib/payments/actions';
+// import { getUser, getUserWithTeam } from '@/lib/db/queries';
 import {
   validatedAction,
   validatedActionWithUser
-} from '@/lib/core/auth/middleware';
-
-async function logActivity(
-  teamId: number | null | undefined,
-  userId: number,
-  type: ActivityType,
-  ipAddress?: string
-) {
-  if (teamId === null || teamId === undefined) {
-    return;
-  }
-  const newActivity: NewActivityLog = {
-    teamId,
-    userId,
-    action: type,
-    ipAddress: ipAddress || ''
-  };
-  await db.insert(activityLogs).values(newActivity);
-}
+} from '@/lib/auth/middleware';
+import { logActivity } from '@/lib/core/db/logging';
+import { getUser, getUserWithTeam } from '@/lib/core/db/queries';
 
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
@@ -92,10 +76,6 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
   ]);
 
   const redirectTo = formData.get('redirect') as string | null;
-  if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: foundTeam, priceId });
-  }
 
   redirect('/dashboard');
 });
@@ -213,11 +193,6 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   ]);
 
   const redirectTo = formData.get('redirect') as string | null;
-  if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: createdTeam, priceId });
-  }
-
   redirect('/dashboard');
 });
 

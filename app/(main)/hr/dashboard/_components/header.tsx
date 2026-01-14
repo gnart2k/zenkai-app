@@ -22,8 +22,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
-import { signOut } from '@/app/(login)/actions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { signOut } from '@/lib/features/auth/actions';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

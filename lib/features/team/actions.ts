@@ -2,17 +2,16 @@
 
 import { z } from 'zod';
 import { and, eq } from 'drizzle-orm';
-import { db } from '@/lib/core/db/drizzle';
+import { db } from '@/lib/db/drizzle';
 import {
   users,
   teamMembers,
-  activityLogs,
   ActivityType,
   invitations
-} from '@/lib/core/db/schema';
+} from '@/lib/db/schema';
+import { validatedActionWithUser } from '@/lib/auth/middleware';
+import { logActivity } from '@/lib/utils';
 import { getUserWithTeam } from '@/lib/core/db/queries';
-import { validatedActionWithUser } from '@/lib/core/auth/middleware';
-import { logActivity } from '@/lib/features/auth/actions';
 
 const removeTeamMemberSchema = z.object({
   memberId: z.coerce.number()

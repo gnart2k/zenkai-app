@@ -27,8 +27,12 @@ export function DocumentUpload({
 
   const handleFileUpload = useCallback(
     async () => {
-      if (uploading || disabled) return;
-      const selectedFile:File  = file;
+      if (uploading || disabled || !file) {
+        console.log("uploading:", uploading, "disabled:", disabled, "file:", file);
+        console.error("Upload in progress or disabled, or no file selected");
+        return
+      };
+      const selectedFile: File = file;
       // Client-side validation
       const validation = validateFileForOCR(selectedFile);
       if (!validation.isValid) {
@@ -58,7 +62,7 @@ export function DocumentUpload({
         onProgress?.("Uploading to OCR service...");
 
         const result = await extractDocumentText(formData);
-
+        console.log("OCR result:", result);
         if (result.success && result.data) {
           onTextExtracted(result.data.text);
           onProgress?.("Processing completed successfully");

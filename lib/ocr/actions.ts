@@ -78,7 +78,7 @@ export async function extractDocumentText(formData: FormData) {
 
     // Enhance result with metadata
     const enhancedResult: OCRResult = {
-      text: result.text || "",
+      text: result.extracted_text || "",
       tables: result.tables || [],
       images: result.images || [],
       metadata: {

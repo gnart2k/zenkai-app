@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { Geist } from "next/font/google";
 import { SWRConfig } from 'swr';
 import { I18nProvider } from '@/components/I18nProvider';
 import { getTeamForUser, getUser } from '@/lib/core/db/queries';
@@ -14,7 +14,11 @@ export const viewport: Viewport = {
   maximumScale: 1
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const font = Geist({
+	weight: ["400", "700"], // recommended
+	subsets: ["latin"],
+	variable: "--font-pt",
+});
 
 export default function RootLayout({
   children
@@ -24,8 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
-    >
+      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${font.variable}`}>
       <body className="min-h-[100dvh] bg-gray-50">
         <I18nProvider>
           <SWRConfig

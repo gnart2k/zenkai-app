@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "header": "Senior Frontend Engineer",
+    "type": "Engineering",
+    "status": "Open",
+    "target": "15",
+    "limit": "120",
+    "reviewer": "Sarah Chen"
+  },
+  {
+    "id": 2,
+    "header": "Lead Product Designer (AI)",
+    "type": "Design",
+    "status": "Open",
+    "target": "8",
+    "limit": "75",
+    "reviewer": "Leila Ahmadi"
+  },
+  {
+    "id": 3,
+    "header": "AI Research Scientist",
+    "type": "Research & Development",
+    "status": "Interviewing",
+    "target": "5",
+    "limit": "95",
+    "reviewer": "Dr. Alex Thompson"
+  },
+  {
+    "id": 4,
+    "header": "DevOps Engineer",
+    "type": "Engineering",
+    "status": "Open",
+    "target": "12",
+    "limit": "88",
+    "reviewer": "Thomas Wilson"
+  },
+  {
+    "id": 5,
+    "header": "Data Scientist",
+    "type": "Data Science",
+    "status": "Filled",
+    "target": "0",
+    "limit": "210",
+    "reviewer": "Nina Patel"
+  },
+  {
+    "id": 6,
+    "header": "Junior Backend Engineer",
+    "type": "Engineering",
+    "status": "Interviewing",
+    "target": "7",
+    "limit": "150",
+    "reviewer": "Raj Patel"
+  },
+  {
+    "id": 7,
+    "header": "Head of People Operations",
+    "type": "Human Resources",
+    "status": "Open",
+    "target": "25",
+    "limit": "130",
+    "reviewer": "Sophia Martinez"
+  },
+  {
+    "id": 8,
+    "header": "Content Strategist",
+    "type": "Marketing",
+    "status": "On Hold",
+    "target": "3",
+    "limit": "45",
+    "reviewer": "Maria Garcia"
+  },
+  {
+    "id": 9,
+    "header": "Lead Conversation Designer",
+    "type": "AI/UX",
+    "status": "Interviewing",
+    "target": "4",
+    "limit": "60",
+    "reviewer": "Jamik Tashpulatov"
+  },
+  {
+    "id": 10,
+    "header": "QA Automation Engineer",
+    "type": "Engineering",
+    "status": "Open",
+    "target": "9",
+    "limit": "77",
+    "reviewer": "Priya Singh"
+  },
+  {
+    "id": 11,
+    "header": "Cloud Solutions Architect",
+    "type": "Engineering",
+    "status": "Filled",
+    "target": "0",
+    "limit": "40",
+    "reviewer": "Daniel Park"
+  },
+  {
+    "id": 12,
+    "header": "Technical Program Manager (AI)",
+    "type": "Product Management",
+    "status": "Open",
+    "target": "11",
+    "limit": "55",
+    "reviewer": "Carlos Rodriguez"
+  }
+]

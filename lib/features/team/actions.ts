@@ -10,8 +10,8 @@ import {
   invitations
 } from '@/lib/db/schema';
 import { validatedActionWithUser } from '@/lib/auth/middleware';
-import { logActivity } from '@/lib/utils';
 import { getUserWithTeam } from '@/lib/core/db/queries';
+import { logActivity } from '@/lib/core/db/logging';
 
 const removeTeamMemberSchema = z.object({
   memberId: z.coerce.number()

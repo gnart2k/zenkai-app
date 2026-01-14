@@ -9,9 +9,7 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card';
-import { customerPortalAction } from '@/lib/features/payments/actions';
 import { useActionState } from 'react';
-import { TeamDataWithMembers, User } from '@/lib/core/db/schema';
 import { removeTeamMember, inviteTeamMember } from '@/lib/features/team/actions';
 import useSWR from 'swr';
 import { Suspense } from 'react';
@@ -20,6 +18,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { TeamDataWithMembers, User } from '@/lib/db/schema';
 
 type ActionState = {
   error?: string;
@@ -62,11 +61,11 @@ function ManageSubscription() {
                   : 'No active subscription'}
               </p>
             </div>
-            <form action={customerPortalAction}>
+            {/* <form action={customerPortalAction}>
               <Button type="submit" variant="outline">
                 Manage Subscription
               </Button>
-            </form>
+            </form> */}
           </div>
         </div>
       </CardContent>

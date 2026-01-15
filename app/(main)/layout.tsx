@@ -15,8 +15,9 @@ import { useRouter } from 'next/navigation';
 import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
 import { signOut } from '@/lib/features/auth/actions';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { HRAppSidebar } from './hr/_components/hr-app-sidebar';
+import { SiteHeader } from '@/components/site-header';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -83,19 +84,22 @@ function UserMenu() {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="flex flex-col min-h-screen">
-          <div>
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
-      >
-        <HRAppSidebar variant="inset" />
-        {children}
-      </SidebarProvider>
-    </div>
+      <div>
+        <SidebarProvider
+          style={
+            {
+              "--sidebar-width": "calc(var(--spacing) * 72)",
+              "--header-height": "calc(var(--spacing) * 12)",
+            } as React.CSSProperties
+          }
+        >
+          <HRAppSidebar variant="inset" />
+          <SidebarInset>
+            <SiteHeader />
+            {children}
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
     </section>
   );
 }

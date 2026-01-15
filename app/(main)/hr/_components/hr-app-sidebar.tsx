@@ -6,7 +6,6 @@ import {
   IconChartBar,
   IconDashboard,
   IconFolder,
-  IconHome,
   IconSettings,
   IconUsers,
 } from '@tabler/icons-react';
@@ -37,7 +36,7 @@ const navMain = [
     },
     {
       title: 'Jobs',
-      url: '/hr/dashboard/jobs',
+      url: '/hr/jobs',
       icon: IconFolder,
     },
     {

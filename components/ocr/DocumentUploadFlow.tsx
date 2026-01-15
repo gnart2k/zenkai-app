@@ -9,13 +9,8 @@ import { DocumentUpload } from '@/components/ocr/DocumentUpload';
 import { CVPreview } from '@/components/ocr/CVPreview';
 import { JDPreview } from '@/components/ocr/JDPreview';
 import { MissingDataAlert } from '@/components/ocr/MissingDataAlert';
-import { 
-  extractDocumentText 
-} from '@/lib/ocr/actions';
-import { 
-  extractCVData, 
-  extractJDData 
-} from '@/lib/ocr/extractors';
+
+import { extractCVData, extractJDData } from '@/lib/ocr/extractors';
 import { 
   validateDocument 
 } from '@/lib/ocr/validator';
@@ -148,6 +143,8 @@ export function DocumentUploadFlow({
         extractedData = result.data as JDData;
         confidence = result.confidence;
       }
+
+      console.log('Extracted Data:', extractedData);
 
       setProcessingProgress(60);
       setProcessingMessage('Validating extracted data...');

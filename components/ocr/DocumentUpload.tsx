@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { extractDocumentText } from "@/lib/ocr/actions";
 import { formatFileSize } from "@/lib/ocr/utils";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export function DocumentUpload({
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileUpload = useCallback(
-    async () => {
+    async ({file}:{file: File}) => {
       if (uploading || disabled || !file) {
         console.log("uploading:", uploading, "disabled:", disabled, "file:", file);
         console.error("Upload in progress or disabled, or no file selected");
@@ -85,6 +85,12 @@ export function DocumentUpload({
     },
     [uploading, disabled, onError, onProgress, onTextExtracted]
   );
+
+  useEffect(() => {
+    if (file) {
+      handleFileUpload({file});
+    }
+  }, [file]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -277,7 +283,7 @@ export function DocumentUpload({
             </div>
           </div>
         )}
-        <Button className="" onClick={()=> handleFileUpload()}>
+        <Button className="" onClick={()=> handleFileUpload({file: file!})} disabled={uploading || disabled}>
           Upload and Extract Text
         </Button>
       </div>

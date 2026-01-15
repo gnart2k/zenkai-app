@@ -41,13 +41,8 @@ const navMain = [
     },
     {
       title: 'Candidates',
-      url: '/hr/dashboard/candidates',
+      url: '/hr/candidates',
       icon: IconUsers,
-    },
-    {
-      title: 'Analytics',
-      url: '/hr/dashboard/analytics',
-      icon: IconChartBar,
     },
     {
       title: 'Settings',
@@ -58,9 +53,8 @@ const navMain = [
 
 function UserProfile() {
   const { data: user } = useSWR<User>('/api/user', fetcher);
-
   const u = {
-    name: user?.name ?? '',
+    name: user?.name ?? (user?.email ? user.email.split('@')[0] : 'Guest'),
     email: user?.email ?? '',
     avatar: user?.avatar ?? '',
   }

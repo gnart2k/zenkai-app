@@ -188,7 +188,7 @@ export function JobList({ onCreateJob, onEditJob, onViewJob }: JobListProps) {
             {/* Header */}
             <div className="flex px-4 pt-4 lg:px-6 items-center justify-between">
                 <div>
-                    <h2 className="text-3xl tracking-tight">Job Positions</h2>
+                    <h2 className="text-3xl font-semibold tracking-tight">Job Positions</h2>
                     <p className="text-muted-foreground">
                         Manage and monitor your AI-powered interview positions
                     </p>

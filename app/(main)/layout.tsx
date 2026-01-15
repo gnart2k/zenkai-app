@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { User } from '@/lib/db/schema';
 import useSWR, { mutate } from 'swr';
 import { signOut } from '@/lib/features/auth/actions';
@@ -35,12 +35,6 @@ function UserMenu() {
   if (!user) {
     return (
       <>
-        <Link
-          href="/pricing"
-          className="text-sm font-medium text-gray-700 hover:text-gray-900"
-        >
-          Pricing
-        </Link>
         <Button asChild className="rounded-full">
           <Link href="/sign-up">Sign Up</Link>
         </Button>
@@ -82,6 +76,39 @@ function UserMenu() {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  // Generate breadcrumbs from pathname
+  const generateBreadcrumbs = (path: string) => {
+    const segments = path.split('/').filter(Boolean);
+    
+    // Find the index where 'hr' appears
+    const hrIndex = segments.indexOf('hr');
+    
+    if (hrIndex === -1) {
+      // If no 'hr' in path, return default
+      return [{ title: 'HR', href: '/hr' }];
+    }
+    
+    // Start breadcrumbs from 'hr' onwards
+    const hrSegments = segments.slice(hrIndex);
+    const breadcrumbs = [{ title: 'HR', href: '/hr' }];
+
+    let currentPath = '/hr';
+    hrSegments.slice(1).forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      const title = segment.charAt(0).toUpperCase() + segment.slice(1).replace('-', ' ');
+      breadcrumbs.push({
+        title,
+        href: index === hrSegments.slice(1).length - 1 ? undefined : currentPath // Last item doesn't have href
+      });
+    });
+
+    return breadcrumbs;
+  };
+
+  const breadcrumbs = generateBreadcrumbs(pathname);
+
   return (
     <section className="flex flex-col min-h-screen">
       <div>
@@ -95,7 +122,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         >
           <HRAppSidebar variant="inset" />
           <SidebarInset>
-            <SiteHeader />
+            <SiteHeader breadcrumbs={breadcrumbs} />
             {children}
           </SidebarInset>
         </SidebarProvider>

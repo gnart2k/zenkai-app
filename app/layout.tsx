@@ -15,9 +15,9 @@ export const viewport: Viewport = {
 };
 
 const font = Geist({
-	weight: ["400", "700"], // recommended
+	weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 	subsets: ["latin"],
-	variable: "--font-pt",
+	variable: "--font-geist",
 });
 
 export default function RootLayout({

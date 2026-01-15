@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import type { Job } from "../job-list";
+import { Job } from "../jobs/_components/job-list";
 
 export interface Candidate {
   id: string;
@@ -41,7 +41,7 @@ export interface Candidate {
 
 interface CandidateDetailsProps {
   candidate: Candidate;
-  job: Job;
+  job: Job | null;
   onBack: () => void;
 }
 
@@ -338,7 +338,7 @@ export function CandidateDetails({ candidate, job, onBack }: CandidateDetailsPro
                 <Separator />
                 <div>
                   <h4 className="text-sm mb-2">Applied For</h4>
-                  <p className="text-sm text-muted-foreground">{job.title}</p>
+                  <p className="text-sm text-muted-foreground">{job?.title || "-"}</p>
                 </div>
               </CardContent>
             </Card>

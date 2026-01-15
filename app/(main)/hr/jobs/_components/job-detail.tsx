@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Job } from "./job-list";
-import type { Candidate } from "./candidate/job-candidate-details";
+import type { Candidate } from "../../_components/candidate-details";
 
 interface JobDetailsProps {
   job: Job;

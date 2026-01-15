@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Job, JobList } from "./job-list";
 import { JobDetails } from "./job-detail";
 import { JobForm } from "./job-form";
-import { CandidateDetails, type Candidate } from "./candidate/job-candidate-details";
+import { CandidateDetails, type Candidate } from "../../_components/candidate-details";
 import { Toaster } from "@/components/ui/sonner";
 
 type View = "list" | "details" | "candidate";

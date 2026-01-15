@@ -77,7 +77,7 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 
   const redirectTo = formData.get('redirect') as string | null;
 
-  redirect('/dashboard');
+  return { success: 'Signed in successfully' };
 });
 
 const signUpSchema = z.object({
@@ -193,7 +193,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   ]);
 
   const redirectTo = formData.get('redirect') as string | null;
-  redirect('/dashboard');
+  return { success: 'Signed up successfully' };
 });
 
 export async function signOut() {

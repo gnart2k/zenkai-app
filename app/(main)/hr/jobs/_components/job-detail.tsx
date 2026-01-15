@@ -12,14 +12,16 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Job } from "./job-list";
+import type { Candidate } from "./candidate/job-candidate-details";
 
 interface JobDetailsProps {
   job: Job;
   onBack: () => void;
   onEdit: () => void;
+  onViewCandidate: (candidate: Candidate) => void;
 }
 
-export function JobDetails({ job, onBack, onEdit }: JobDetailsProps) {
+export function JobDetails({ job, onBack, onEdit, onViewCandidate }: JobDetailsProps) {
   const getStatusColor = (status: Job["status"]) => {
     switch (status) {
       case "active":
@@ -47,11 +49,63 @@ export function JobDetails({ job, onBack, onEdit }: JobDetailsProps) {
     "What's your experience with TypeScript and type-safe development?",
   ];
 
-  const mockRecentCandidates = [
-    { name: "Sarah Johnson", stage: "AI Interview Completed", score: 85, date: "2026-01-14" },
-    { name: "Michael Chen", stage: "AI Interview Scheduled", score: null, date: "2026-01-15" },
-    { name: "Emily Rodriguez", stage: "AI Interview Completed", score: 92, date: "2026-01-13" },
-    { name: "David Kim", stage: "Applied", score: null, date: "2026-01-14" },
+  const mockRecentCandidates: Candidate[] = [
+    { 
+      id: "1",
+      name: "Sarah Johnson", 
+      email: "sarah.johnson@email.com",
+      phone: "+1 (555) 123-4567",
+      location: "San Francisco, CA",
+      linkedin: "https://linkedin.com/in/sarahjohnson",
+      appliedDate: "2026-01-12",
+      stage: "AI Interview Completed", 
+      aiScore: 85,
+      experience: "5 years",
+      currentRole: "Frontend Developer",
+      currentCompany: "TechCorp Inc.",
+    },
+    { 
+      id: "2",
+      name: "Michael Chen", 
+      email: "michael.chen@email.com",
+      phone: "+1 (555) 234-5678",
+      location: "New York, NY",
+      linkedin: "https://linkedin.com/in/michaelchen",
+      appliedDate: "2026-01-13",
+      stage: "AI Interview Scheduled", 
+      aiScore: null,
+      experience: "6 years",
+      currentRole: "Senior Frontend Engineer",
+      currentCompany: "StartupXYZ",
+    },
+    { 
+      id: "3",
+      name: "Emily Rodriguez", 
+      email: "emily.rodriguez@email.com",
+      phone: "+1 (555) 345-6789",
+      location: "Austin, TX",
+      linkedin: "https://linkedin.com/in/emilyrodriguez",
+      appliedDate: "2026-01-11",
+      stage: "AI Interview Completed", 
+      aiScore: 92,
+      experience: "7 years",
+      currentRole: "Lead Frontend Developer",
+      currentCompany: "Digital Agency Co.",
+    },
+    { 
+      id: "4",
+      name: "David Kim", 
+      email: "david.kim@email.com",
+      phone: "+1 (555) 456-7890",
+      location: "Seattle, WA",
+      linkedin: "https://linkedin.com/in/davidkim",
+      appliedDate: "2026-01-14",
+      stage: "Applied", 
+      aiScore: null,
+      experience: "4 years",
+      currentRole: "Frontend Developer",
+      currentCompany: "E-commerce Platform",
+    },
   ];
 
   return (
@@ -199,11 +253,11 @@ export function JobDetails({ job, onBack, onEdit }: JobDetailsProps) {
                         <p className="text-xs text-muted-foreground">{candidate.stage}</p>
                       </div>
                       <div className="text-right">
-                        {candidate.score !== null && (
-                          <Badge variant="secondary">{candidate.score}%</Badge>
+                        {candidate.aiScore !== null && (
+                          <Badge variant="secondary">{candidate.aiScore}%</Badge>
                         )}
                         <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(candidate.date).toLocaleDateString()}
+                          {new Date(candidate.appliedDate).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -326,13 +380,13 @@ export function JobDetails({ job, onBack, onEdit }: JobDetailsProps) {
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      {candidate.score !== null && (
+                      {candidate.aiScore !== null && (
                         <div className="text-right">
                           <p className="text-sm">AI Score</p>
-                          <Badge variant="secondary">{candidate.score}%</Badge>
+                          <Badge variant="secondary">{candidate.aiScore}%</Badge>
                         </div>
                       )}
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => onViewCandidate(candidate)}>
                         View Details
                       </Button>
                     </div>

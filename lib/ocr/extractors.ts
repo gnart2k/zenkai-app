@@ -1,4 +1,4 @@
-import { AIService, createAIService } from '../ai-service';
+import { AIService, createAIService } from '../ai/ai-service';
 import { 
   ValidationResult
 } from '../../types';
@@ -37,21 +37,33 @@ export class AIExtractionService {
         4. Technical and soft skills with categories
         5. Certifications, projects, and achievements
         
+        CRITICAL INSTRUCTIONS:
+        - Return ONLY valid JSON, no markdown formatting, no code blocks, no explanations
+        - Do NOT include \`\`\`json or \`\`\` markers
+        - Do NOT add any text before or after the JSON
+        - Response must start with { and end with }
+        
         Guidelines:
-        - Return valid JSON that matches the CVData interface exactly
+        - Match the CVData interface structure exactly
         - If information is missing or unclear, still try to extract what's available
         - Use arrays for lists (skills, experience, education)
         - Normalize dates where possible
         - Extract confidence levels for different sections
         
-        Output Format:
+        Output must be pure JSON:
         {
           "personalInfo": { ... },
+          "summary": "",
+          "objective": "",
           "experience": [ ... ],
           "education": [ ... ],
-          "skills": { "technical": [...], "soft": [...] },
+          "skills": { "technical": [...], "soft": [] },
           "certifications": [ ... ],
-          "projects": [ ... ]
+          "projects": [ ... ],
+          "awards": [ ... ],
+          "publications": [ ... ],
+          "volunteer": [ ... ],
+          "references": [ ... ]
         }
       `
     });
@@ -71,26 +83,39 @@ export class AIExtractionService {
         4. Skills and qualifications needed
         5. Compensation, benefits, and company culture information
         
+        CRITICAL INSTRUCTIONS:
+        - Return ONLY valid JSON, no markdown formatting, no code blocks, no explanations
+        - Do NOT include \`\`\`json or \`\`\` markers
+        - Do NOT add any text before or after the JSON
+        - Response must start with { and end with }
+        
         Guidelines:
-        - Return valid JSON that matches the JDData interface exactly
+        - Match the JDData interface structure exactly
         - Distinguish between required and preferred qualifications
         - Use arrays for lists (skills, responsibilities, requirements)
         - Extract employment type, experience level, and remote options
         - Normalize dates and durations where mentioned
         
-        Output Format:
+        Output must be pure JSON:
         {
           "jobTitle": "...",
           "company": "...",
+          "location": "",
+          "employmentType": "",
+          "experienceLevel": "",
+          "salary": "",
+          "remoteOption": "",
+          "summary": "",
+          "aboutCompany": "",
           "responsibilities": [...],
-          "requirements": {
-            "required": [...],
-            "preferred": [...]
-          },
-          "skills": { "technical": [...], "soft": [...] },
-          "employmentType": "...",
-          "experienceLevel": "...",
-          "remoteOption": "..."
+          "requirements": { "required": [], "preferred": [], "education": [], "experience": [] },
+          "skills": { "technical": [], "soft": [], "frameworks": [], "databases": [], "tools": [] },
+          "benefits": [],
+          "applicationDeadline": "",
+          "postedDate": "",
+          "department": "",
+          "reportsTo": "",
+          "teamSize": ""
         }
       `
     });
@@ -199,47 +224,66 @@ export class AIExtractionService {
   }
 
   /**
-   * Get extraction validation results
-   */
+    * Get extraction validation results
+    */
   async validateExtraction(
     type: 'cv' | 'jd',
     originalText: string,
     extractedData: CVData | JDData
   ): Promise<ValidationResult> {
-    const service = type === 'cv' ? this.cvService : this.jdService;
+    // Create a new AI service for validation with proper response type
+    const validationService = createAIService<string, any>({
+      temperature: 0.3,
+      maxTokens: 1000,
+      systemPrompt: `
+        You are a data validation expert for OCR extraction.
+        
+        CRITICAL INSTRUCTIONS:
+        - Return ONLY valid JSON, no markdown formatting, no code blocks, no explanations
+        - Do NOT include \`\`\`json or \`\`\` markers
+        - Response must start with { and end with }
+        
+        Analyze the provided data and return validation results with this exact structure:
+        {
+          "score": 85,
+          "grade": "B",
+          "issues": ["issue1", "issue2"],
+          "suggestions": ["suggestion1", "suggestion2"],
+          "completeness": {
+            "overall": 80,
+            "personalInfo": 90,
+            "experience": 75,
+            "education": 85,
+            "skills": 70,
+            "summary": 60
+          },
+          "qualityScore": {
+            "overall": 82,
+            "clarity": 85,
+            "impact": 78,
+            "keywordOptimization": 80,
+            "structure": 85,
+            "completeness": 80
+          },
+          "confidence": 0.85
+        }
+      `
+    });
     
-    const validationPrompt = `
-      You are a data validation expert.
-      
-      Compare the original OCR text with the extracted structured data.
-      Identify missing information, inconsistencies, or formatting issues.
-      
+    const validationText = `
       Original OCR Text:
       ${originalText}
       
       Extracted Data:
       ${JSON.stringify(extractedData, null, 2)}
       
-      Analyze and provide:
-      1. Overall quality score (0-100)
-      2. Missing critical fields
-      3. Data inconsistencies
-      4. Suggestions for improvement
-      
-      Return JSON with: score, issues, suggestions, completeness, qualityScore, confidence
+      Analyze and provide validation results as pure JSON only.
     `;
 
     try {
-      // Request validation that returns proper ValidationResult structure
-      const validationRequest = {
-        text: `Validation Request: Compare original text "${originalText}" with extracted data`,
-        extractedData
-      };
-
-      const validationResult = await service.generate(
-        validationRequest,
-        class ValidationType {} as any,
-        validationPrompt
+      const validationResult = await validationService.generate(
+        validationText,
+        class ValidationType {} as any
       );
       
       // Ensure we return ValidationResult that matches expected interface
@@ -265,14 +309,73 @@ class JDDataType {}
 class ValidationType {}
 
 // Export functions for backward compatibility
-export async function extractCVData(ocrText: string): Promise<CVData> {
+export async function extractCVData(ocrText: string): Promise<{ data: CVData; confidence: number }> {
   const service = new AIExtractionService();
-  return service.extractCVData(ocrText);
+  const data = await service.extractCVData(ocrText);
+  // Calculate confidence based on data completeness
+  const confidence = calculateConfidence(data);
+  return { data, confidence };
 }
 
-export async function extractJDData(ocrText: string): Promise<JDData> {
+export async function extractJDData(ocrText: string): Promise<{ data: JDData; confidence: number }> {
   const service = new AIExtractionService();
-  return service.extractJDData(ocrText);
+  const data = await service.extractJDData(ocrText);
+  // Calculate confidence based on data completeness
+  const confidence = calculateConfidence(data);
+  return { data, confidence };
+}
+
+// Helper function to calculate confidence score
+function calculateConfidence(data: CVData | JDData): number {
+  const cvData = data as CVData;
+  const jdData = data as JDData;
+  
+  let score = 0;
+  let totalFields = 0;
+  
+  if (cvData.personalInfo || cvData.experience) {
+    // CV confidence calculation
+    if (cvData.personalInfo) {
+      const pi = cvData.personalInfo;
+      if (pi.name) { score += 15; }
+      if (pi.email) { score += 10; }
+      if (pi.phone) { score += 10; }
+      if (pi.location) { score += 5; }
+      totalFields += 40;
+    }
+    
+    if (cvData.experience && cvData.experience.length > 0) {
+      score += Math.min(30, cvData.experience.length * 10);
+      totalFields += 30;
+    }
+    
+    if (cvData.education && cvData.education.length > 0) {
+      score += Math.min(15, cvData.education.length * 8);
+      totalFields += 15;
+    }
+    
+    if (cvData.skills && ((cvData.skills.technical?.length || 0) > 0 || (cvData.skills.soft?.length || 0) > 0)) {
+      score += 15;
+      totalFields += 15;
+    }
+    
+  } else {
+    // JD confidence calculation
+    if (jdData.jobTitle) { score += 20; }
+    if (jdData.company) { score += 10; }
+    if (jdData.responsibilities && jdData.responsibilities.length > 0) {
+      score += Math.min(25, jdData.responsibilities.length * 5);
+    }
+    if (jdData.requirements && ((jdData.requirements.required?.length || 0) > 0 || (jdData.requirements.preferred?.length || 0) > 0)) {
+      score += 20;
+    }
+    if (jdData.skills && ((jdData.skills.technical?.length || 0) > 0 || (jdData.skills.soft?.length || 0) > 0)) {
+      score += 15;
+    }
+    totalFields = 90;
+  }
+  
+  return totalFields > 0 ? Math.min(1, score / totalFields) : 0;
 }
 
 export async function validateExtraction(

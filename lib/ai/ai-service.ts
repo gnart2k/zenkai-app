@@ -1,4 +1,4 @@
-import { generateWithOllama, ChatMessage } from './interview/ollama-client';
+import { generateWithOllama, ChatMessage } from '../interview/ollama-client';
 
 /**
  * Configuration for AI service calls
@@ -98,58 +98,59 @@ Please provide a structured JSON response based on the instructions above.`;
       const encoder = new TextEncoder();
       let buffer = '';
 
-      return new ReadableStream({
-        async start(controller) {
-          const reader = response.body?.getReader();
-          if (!reader) {
-            controller.close();
-            return;
-          }
+          const self = this;
+          return new ReadableStream({
+          async start(controller) {
+            const reader = response.body?.getReader();
+            if (!reader) {
+              controller.close();
+              return;
+            }
 
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
 
-            const chunk = new TextDecoder().decode(value);
-            const lines = chunk.split('\n');
-            
-            for (const line of lines) {
-              if (line.trim() === '') continue;
+              const chunk = new TextDecoder().decode(value);
+              const lines = chunk.split('\n');
               
-              if (line.startsWith('data: ')) {
-                try {
-                  const data = JSON.parse(line.slice(6));
-                  const content = data.message?.content || '';
-                  
-                  if (content) {
-                    buffer += content;
+              for (const line of lines) {
+                if (line.trim() === '') continue;
+                
+                if (line.startsWith('data: ')) {
+                  try {
+                    const data = JSON.parse(line.slice(6));
+                    const content = data.message?.content || '';
                     
-                    // Try to parse accumulated buffer as partial response
-                    try {
-                      const partialResponse = this.parseResponse(buffer, outputType);
-                      controller.enqueue(partialResponse);
-                    } catch {
-                      // If parsing fails, continue accumulating
+                    if (content) {
+                      buffer += content;
+                      
+                      // Try to parse accumulated buffer as partial response
+                      try {
+                        const partialResponse = self.parseResponse(buffer, outputType);
+                        controller.enqueue(partialResponse);
+                      } catch {
+                        // If parsing fails, continue accumulating
+                      }
                     }
+                  } catch (e) {
+                    // Ignore JSON parse errors for partial chunks
                   }
-                } catch (e) {
-                  // Ignore JSON parse errors for partial chunks
                 }
               }
             }
-          }
 
-          // Final parse attempt
-          try {
-            const finalResponse = this.parseResponse(buffer, outputType);
-            controller.enqueue(finalResponse);
-          } catch (e) {
-            console.warn('Final response parsing failed:', e);
-          }
-          
-          controller.close();
-        },
-      });
+            // Final parse attempt
+            try {
+              const finalResponse = self.parseResponse(buffer, outputType);
+              controller.enqueue(finalResponse);
+            } catch (e) {
+              console.warn('Final response parsing failed:', e);
+            }
+            
+            controller.close();
+          },
+        });
     } catch (error) {
       console.error('AIService stream generation error:', error);
       throw new Error(`AI service streaming failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -157,8 +158,8 @@ Please provide a structured JSON response based on the instructions above.`;
   }
 
   /**
-   * Create a prompt based on input and expected output type
-   */
+    * Create a prompt based on input and expected output type
+    */
   private createPrompt(input: TInput, outputType: new () => TOutput): string {
     const inputJson = JSON.stringify(input, null, 2);
     const outputTypeName = outputType.name;
@@ -170,34 +171,59 @@ Given the following input:
 ${inputJson}
 
 Please generate a response that matches the TypeScript type "${outputTypeName}". 
-Return the response as valid JSON that can be parsed to match the expected type structure.
+
+CRITICAL INSTRUCTIONS:
+- Return ONLY valid JSON, no markdown formatting, no code blocks, no explanations
+- Do NOT include \`\`\`json or \`\`\` markers
+- Do NOT add any text before or after the JSON
+- Response must start with { and end with }
 
 Requirements:
-1. Return valid JSON only and nothing else, do not include json markedown or any extra text
+1. Return pure JSON only - no markdown, no explanations, no introductory text
 2. Match the exact structure of the expected type
 3. Use appropriate data types (string, number, boolean, array, object)
 4. If a field is optional and you don't have data, either omit it or use null
 5. Provide realistic and relevant data based on the input
 
-Output format:
-{
-  // Your JSON response here
-}
+Your entire response should be valid JSON that can be parsed directly.
 `.trim();
   }
 
   /**
-   * Parse AI response to match expected output type
-   */
+    * Parse AI response to match expected output type
+    */
   private parseResponse(response: string, outputType: new () => TOutput): TOutput {
     try {
-      // Clean up the response to extract JSON
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        throw new Error('No JSON found in response');
+      // Clean up the response to extract JSON, handling markdown code blocks
+      let jsonStr = response.trim();
+      
+      // Remove markdown code blocks if present
+      if (jsonStr.includes('```')) {
+        // Extract content between ```json and ``` or just ```
+        const jsonBlockMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonBlockMatch) {
+          jsonStr = jsonBlockMatch[1];
+        } else {
+          // Fallback: find JSON object within the response
+          const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            jsonStr = jsonMatch[0];
+          }
+        }
+      } else {
+        // If no markdown, try to extract JSON object
+        const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonStr = jsonMatch[0];
+        }
+      }
+      
+      jsonStr = jsonStr.trim();
+      
+      if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
+        throw new Error('No valid JSON object found in response');
       }
 
-      const jsonStr = jsonMatch[0];
       const parsed = JSON.parse(jsonStr);
       
       // Basic validation that the parsed result resembles the expected structure

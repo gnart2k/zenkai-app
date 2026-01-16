@@ -29,7 +29,7 @@ const hrData: SectionCardData[] = [
       title: "Avg. Time to Hire",
       value: "28 days",
       change: "-3 days",
-      changeType: "down",
+      changeType: "up",
       footerText: "Faster hiring cycle",
       footerSubtext: "Improvement from last quarter",
     },

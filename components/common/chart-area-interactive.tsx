@@ -132,11 +132,11 @@ const chartConfig = {
   },
   desktop: {
     label: "Desktop",
-    color: "var(--primary)",
+    color: "#2563eb", // Blue-600
   },
   mobile: {
     label: "Mobile",
-    color: "var(--primary)",
+    color: "#9333ea", // Purple-600
   },
 } satisfies ChartConfig
 

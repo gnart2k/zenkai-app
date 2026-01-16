@@ -25,26 +25,32 @@ export interface SectionCardsProps {
 
 export function SectionCards({ data }: SectionCardsProps) {
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       {data.map((card) => {
         const TrendIcon = card.changeType === "up" ? IconTrendingUp : IconTrendingDown
+        const isPositive = card.changeType === "up"
+        const changeColor = isPositive ? "text-emerald-600" : "text-red-600"
+        const gradientClass = isPositive 
+          ? "bg-gradient-to-t from-emerald-100/10 to-white"
+          : "bg-gradient-to-t from-red-100/10 to-white"
+        
         return (
-          <Card key={card.title} className="@container/card">
+          <Card key={card.title} className={`@container/card ${gradientClass} border-slate-200`}>
             <CardHeader>
-              <CardDescription>{card.title}</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+              <CardDescription className="text-muted-foreground">{card.title}</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums text-slate-900 @[250px]/card:text-3xl">
                 {card.value}
               </CardTitle>
               <CardAction>
-                <Badge variant="outline">
-                  <TrendIcon />
-                  {card.change}
+                <Badge variant="outline" className={`${changeColor} border-slate-200 bg-white`}>
+                  <TrendIcon className="size-4" />
+                  <span className="ml-1 text-xs font-medium">{card.change}</span>
                 </Badge>
               </CardAction>
             </CardHeader>
             <CardFooter className="flex-col items-start gap-1.5 text-sm">
-              <div className="line-clamp-1 flex gap-2 font-medium">
-                {card.footerText} <TrendIcon className="size-4" />
+              <div className="line-clamp-1 flex gap-2 font-medium text-slate-600">
+                {card.footerText}
               </div>
               <div className="text-muted-foreground">{card.footerSubtext}</div>
             </CardFooter>

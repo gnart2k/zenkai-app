@@ -1,4 +1,4 @@
-import { SectionCards, type SectionCardData } from "@/components/section-cards";
+import { SectionCards, type SectionCardData } from "@/components/common/section-cards";
 
 const hrData: SectionCardData[] = [
     {

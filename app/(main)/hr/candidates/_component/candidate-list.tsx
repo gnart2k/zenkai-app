@@ -30,7 +30,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Candidate, CandidateDetails } from "../../_components/candidate-details";
 import { Job } from "../../jobs/_components/job-list";
-import { SectionCards, type SectionCardData } from "@/components/section-cards";
+import { SectionCards, type SectionCardData } from "@/components/common/section-cards";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 

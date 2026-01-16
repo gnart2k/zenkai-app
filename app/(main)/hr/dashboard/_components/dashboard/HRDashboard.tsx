@@ -1,5 +1,5 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
+import { ChartAreaInteractive } from "@/components/common/chart-area-interactive"
+import { DataTable } from "@/components/common/data-table"
 
 import data from "./data.json"
 import { HRSectionCards } from "./hr-section-cards"

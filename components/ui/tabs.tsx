@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 
 interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: string;
+  defaultValue?: string;
   onValueChange?: (value: string) => void;
   children: React.ReactNode;
 }
@@ -26,9 +27,17 @@ const TabsContext = React.createContext<{
   onValueChange?: (value: string) => void;
 }>({});
 
-export const Tabs: React.FC<TabsProps> = ({ children, value, onValueChange, ...props }) => {
+export const Tabs: React.FC<TabsProps> = ({ children, value, defaultValue, onValueChange, ...props }) => {
+  const [internalValue, setInternalValue] = React.useState<string | undefined>(defaultValue);
+  const currentValue = value !== undefined ? value : internalValue;
+  
+  const handleValueChange = (newValue: string) => {
+    setInternalValue(newValue);
+    onValueChange?.(newValue);
+  };
+
   return (
-    <TabsContext.Provider value={{ value, onValueChange }}>
+    <TabsContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
       <div {...props}>
         {children}
       </div>

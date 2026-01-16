@@ -1,6 +1,6 @@
 'use client';
 
-import { useI18n } from '@/components/I18nProvider';
+import { useI18n } from '@/components/common/I18nProvider';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

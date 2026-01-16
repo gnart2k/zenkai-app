@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, PlusCircle } from 'lucide-react';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { TeamDataWithMembers, User } from '@/lib/db/schema';
 
 type ActionState = {

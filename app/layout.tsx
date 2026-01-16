@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Geist } from "next/font/google";
 import { SWRConfig } from 'swr';
-import { I18nProvider } from '@/components/I18nProvider';
+import { I18nProvider } from '@/components/common/I18nProvider';
 import { getTeamForUser, getUser } from '@/lib/core/db/queries';
 
 export const metadata: Metadata = {

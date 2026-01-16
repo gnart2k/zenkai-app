@@ -13,10 +13,10 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 const languages = {
-  en: () => import('../locales/en/common.json'),
-  ja: () => import('../locales/ja/common.json'),
-  ko: () => import('../locales/ko/common.json'),
-  vi: () => import('../locales/vi/common.json'),
+  en: () => import('../../locales/en/common.json'),
+  ja: () => import('../../locales/ja/common.json'),
+  ko: () => import('../../locales/ko/common.json'),
+  vi: () => import('../../locales/vi/common.json'),
 };
 
 export function I18nProvider({ children }: { children: ReactNode }) {

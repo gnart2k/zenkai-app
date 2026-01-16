@@ -26,7 +26,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { SectionCards, type SectionCardData } from "@/components/section-cards";
+import { SectionCards, type SectionCardData } from "@/components/common/section-cards";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface Job {

@@ -1,6 +1,6 @@
-import { useI18n } from '@/components/I18nProvider';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { I18nTest } from '@/components/I18nTest';
+import { useI18n } from '@/components/common/I18nProvider';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { I18nTest } from '@/components/common/I18nTest';
 
 export default function TestPage() {
   const { t, language } = useI18n();

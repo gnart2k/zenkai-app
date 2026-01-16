@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  IconChartBar,
-  IconDashboard,
-  IconFolder,
-  IconSettings,
-  IconUsers,
-} from '@tabler/icons-react';
+  Home,
+  FileText,
+  Video,
+  Briefcase,
+  Clock,
+  Settings,
+} from 'lucide-react';
 
 import { NavMain } from '@/components/common/nav-main';
 import { NavUser } from '@/components/common/nav-user';
@@ -28,28 +29,43 @@ import { CircleIcon } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-const navMain = [
-    {
-      title: 'Dashboard',
-      url: '/hr/dashboard',
-      icon: IconDashboard,
-    },
-    {
-      title: 'Jobs',
-      url: '/hr/jobs',
-      icon: IconFolder,
-    },
-    {
-      title: 'Candidates',
-      url: '/hr/candidates',
-      icon: IconUsers,
-    },
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: IconSettings,
-    },
-  ];
+const menuItems = [
+  {
+    title: 'Dashboard',
+    url: '/job-seeker/dashboard',
+    icon: Home,
+  },
+  {
+    title: 'My CV',
+    url: '/job-seeker/my-cv',
+    icon: FileText,
+  },
+  {
+    title: 'Mock Interview',
+    url: '/job-seeker/mock-interview',
+    icon: Video,
+  },
+  {
+    title: 'Job Market',
+    url: '/job-seeker/job-market',
+    icon: Briefcase,
+  },
+  {
+    title: 'My Applications',
+    url: '/job-seeker/my-applications',
+    icon: Clock,
+  },
+  {
+    title: 'Interview History',
+    url: '/job-seeker/interview-history',
+    icon: Clock,
+  },
+  {
+    title: 'Settings',
+    url: '/settings',
+    icon: Settings,
+  },
+];
 
 function UserProfile() {
   const { data: user } = useSWR<User>('/api/user', fetcher);
@@ -62,7 +78,7 @@ function UserProfile() {
   return <NavUser user={u} />;
 }
 
-export function HRAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function JobSeekerSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -82,7 +98,7 @@ export function HRAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain}/>
+        <NavMain items={menuItems}/>
       </SidebarContent>
       <SidebarFooter>
         <Suspense fallback={<div className="h-12 w-full rounded-lg bg-gray-200 animate-pulse" />}>

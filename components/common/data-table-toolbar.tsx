@@ -3,8 +3,8 @@
 
 import { Table } from "@tanstack/react-table"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-view-options"
-import { DataTableFacetedFilter } from "@/components/data-table-faceted-filter"
+import { DataTableViewOptions } from "@/components/common/data-table-view-options"
+import { DataTableFacetedFilter } from "@/components/common/data-table-faceted-filter"
 import { XIcon } from "lucide-react"
 import { Button } from "./ui/button"
 
